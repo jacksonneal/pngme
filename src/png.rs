@@ -6,12 +6,12 @@ use std::{
 use crate::{chunk::Chunk, chunk_type::ChunkType, Error, Result};
 
 /// Png.
-pub(crate) struct Png {
+pub struct Png {
     chunks: Vec<Chunk>,
 }
 
 impl Png {
-    pub(crate) const STANDARD_HEADER: [u8; 8] = [137, 80, 78, 71, 13, 10, 26, 10];
+    const STANDARD_HEADER: [u8; 8] = [137, 80, 78, 71, 13, 10, 26, 10];
 
     /// Construct a Png from chunks
     fn new(chunks: Vec<Chunk>) -> Self {
@@ -24,12 +24,12 @@ impl Png {
     }
 
     /// Append the given chunk to the end of this Png.
-    pub(crate) fn append_chunk(&mut self, chunk: Chunk) {
+    pub fn append_chunk(&mut self, chunk: Chunk) {
         self.chunks.push(chunk);
     }
 
     /// Remove the chunk matching the given type from this Png. `Err` if no mathcing chunk found.
-    pub(crate) fn remove_chunk(&mut self, chunk_type: ChunkType) -> Result<Chunk> {
+    pub fn remove_chunk(&mut self, chunk_type: ChunkType) -> Result<Chunk> {
         let op_idx = self
             .chunks
             .iter()
@@ -41,22 +41,23 @@ impl Png {
     }
 
     /// Standard Png header.
+    #[allow(dead_code)]
     fn header(&self) -> &[u8; 8] {
         &Png::STANDARD_HEADER
     }
 
     /// Chunk of this Png.
-    pub(crate) fn chunks(&self) -> &[Chunk] {
+    pub fn chunks(&self) -> &[Chunk] {
         self.chunks.as_slice()
     }
 
     /// First chunk matching the given type.
-    pub(crate) fn chunk_by_type(&self, chunk_type: ChunkType) -> Option<&Chunk> {
+    pub fn chunk_by_type(&self, chunk_type: ChunkType) -> Option<&Chunk> {
         self.chunks.iter().find(|c| c.chunk_type() == &chunk_type)
     }
 
     /// All bytes of this Png.
-    pub(crate) fn as_bytes(&self) -> Vec<u8> {
+    pub fn as_bytes(&self) -> Vec<u8> {
         let chunk_bytes: Vec<u8> = self.chunks.iter().map(Chunk::as_bytes).flatten().collect();
         self.header()
             .iter()

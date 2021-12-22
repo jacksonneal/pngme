@@ -6,7 +6,7 @@ use std::{fmt, str};
 /// Type codes are restricted to consist of uppercase and lowercase ASCII letters
 /// (A-Z and a-z, or 65-90 and 97-122 decimal)
 #[derive(Debug, Eq, PartialEq)]
-pub(crate) struct ChunkType {
+pub struct ChunkType {
     bytes: [u8; 4],
 }
 
@@ -21,7 +21,7 @@ impl ChunkType {
     }
 
     /// All bytes in this chunk type.
-    pub(crate) fn bytes(&self) -> [u8; 4] {
+    pub fn bytes(&self) -> [u8; 4] {
         self.bytes
     }
 

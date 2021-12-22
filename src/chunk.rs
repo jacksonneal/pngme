@@ -7,7 +7,7 @@ use std::{
 const MAXIMUM_LENGTH: u32 = (1 << 31) - 1;
 
 /// PNG chunk data.
-pub(crate) struct Chunk {
+pub struct Chunk {
     /// Length of this chunk data in bytes.
     length: u32,
     /// Chunk type.
@@ -20,6 +20,7 @@ pub(crate) struct Chunk {
 
 impl Chunk {
     /// Construct a chunk with the given type and data.
+    #[allow(dead_code)]
     pub(crate) fn new(chunk_type: ChunkType, chunk_data: Vec<u8>) -> Chunk {
         let length: u32 = chunk_data.len() as u32;
         let crc = crc::crc32::checksum_ieee(&[&chunk_type.bytes(), chunk_data.as_slice()].concat());
@@ -32,17 +33,17 @@ impl Chunk {
     }
 
     /// Length of chunk data.
-    fn length(&self) -> u32 {
+    pub fn length(&self) -> u32 {
         self.length
     }
 
     /// Chunk type.
-    pub(crate) fn chunk_type(&self) -> &ChunkType {
+    pub fn chunk_type(&self) -> &ChunkType {
         &self.chunk_type
     }
 
     /// Chunk data.
-    fn data(&self) -> &[u8] {
+    pub fn data(&self) -> &[u8] {
         &self.chunk_data
     }
 
@@ -57,7 +58,7 @@ impl Chunk {
     }
 
     /// All chunk content as bytes.
-    pub(crate) fn as_bytes(&self) -> Vec<u8> {
+    pub fn as_bytes(&self) -> Vec<u8> {
         self.length()
             .to_be_bytes()
             .iter()
