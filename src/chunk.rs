@@ -1,6 +1,6 @@
-use crate::{chunk_type::ChunkType, Error, Result};
+use crate::{chunk_type::ChunkType, encrypt::decrypt, Error, Result};
 use std::{
-    fmt,
+    env, fmt,
     io::{BufReader, Read},
 };
 
@@ -76,8 +76,15 @@ impl fmt::Display for Chunk {
             f,
             "{}\t{}",
             self.chunk_type(),
-            self.data_as_string()
-                .unwrap_or_else(|_| "[data]".to_string()),
+            if env::var("ENCRYPT").is_err() {
+                self.data_as_string()
+                    .unwrap_or_else(|_| "[data]".to_string())
+            } else {
+                decrypt(
+                    self.data_as_string()
+                        .unwrap_or_else(|_| "[data]".to_string()),
+                )
+            },
         )
     }
 }

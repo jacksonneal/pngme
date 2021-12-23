@@ -1,26 +1,37 @@
 use crate::args::*;
 use crate::chunk::Chunk;
 use crate::png::Png;
-use std::convert::TryFrom;
+use crate::encrypt::encrypt;
 use std::fs;
+use std::{convert::TryFrom, env};
 
 fn encode(args: EncodeArgs) -> crate::Result<()> {
+    let msg = if env::var("ENCRYPT").is_err() {
+        args.message
+    } else {
+        encrypt(args.message)
+    };
     let input_bytes = fs::read(&args.input_file_path)?;
     let output = args.output_file_path.unwrap_or(args.input_file_path);
     let mut png = Png::try_from(input_bytes.as_slice())?;
-    let chunk = Chunk::new(args.chunk_type, args.message.as_bytes().to_vec());
+    let chunk = Chunk::new(args.chunk_type, msg.as_bytes().to_vec());
     png.append_chunk(chunk);
     fs::write(output, png.as_bytes())?;
     Ok(())
 }
 
 fn encoder(args: EncodeRArgs) -> crate::Result<()> {
+    let msg = if env::var("ENCRYPT").is_err() {
+        args.message
+    } else {
+        encrypt(args.message)
+    };
     let img_bytes = reqwest::blocking::get(args.url)?.bytes()?;
     let image = image::load_from_memory(&img_bytes)?;
     let mut input_bytes: Vec<u8> = Vec::new();
     image.write_to(&mut input_bytes, image::ImageOutputFormat::Png)?;
     let mut png = Png::try_from(input_bytes.as_slice())?;
-    let chunk = Chunk::new(args.chunk_type, args.message.as_bytes().to_vec());
+    let chunk = Chunk::new(args.chunk_type, msg.as_bytes().to_vec());
     png.append_chunk(chunk);
     let output = args.output_file_path;
     fs::write(output, png.as_bytes())?;

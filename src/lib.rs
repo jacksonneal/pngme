@@ -1,5 +1,9 @@
+#[macro_use]
+extern crate magic_crypt;
+
 mod chunk;
 mod chunk_type;
+mod encrypt;
 mod png;
 
 #[doc(inline)]
